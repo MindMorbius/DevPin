@@ -3,10 +3,15 @@
 import React, { useState } from 'react';
 import { Button, Input, Modal, Tree, Form, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation'  
 
 const { TextArea } = Input;
 
 const EditableTree = () => {
+
+
+  const router = useRouter();
+
   const [treeData, setTreeData] = useState([
     {
       title: 'Root Node 1',
@@ -91,6 +96,10 @@ const EditableTree = () => {
     setSelectedNode(node);
   };
 
+  const goArt = () => {
+    router.push('/art')
+  };
+
   return (
     <div>
       <Tree
@@ -107,7 +116,7 @@ const EditableTree = () => {
               />
             ) : (
               <span>
-                {nodeData.title}
+                <div style={{display:'inline'}} onClick={() => goArt()}>{nodeData.title}</div>
                 <EditOutlined onClick={() => onEditNode(nodeData.key, nodeData.title)} />
                 <PlusOutlined
                   style={{ marginLeft: 8 }}

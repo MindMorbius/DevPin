@@ -3,14 +3,14 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, List, Modal } from 'antd';
 import EditableTree from '@/components/EditableTree'
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation'  
 
 const Home = () => {
 
 
 
 
-  // const router = useRouter();
+  const router = useRouter();
   const [messages, setMessages] = useState([]);
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,7 +35,7 @@ const Home = () => {
   };
 
   const goLogin = () => {
-    document.location.href = '/login';
+    router.push('/login')
   };
 
   return (

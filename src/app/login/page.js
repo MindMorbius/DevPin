@@ -2,8 +2,13 @@
 
 import React, { useState } from 'react';
 import { Button, Form, Input, Tabs, message } from 'antd';
+import { useRouter } from 'next/navigation'  
 
 const LoginRegister = () => {
+
+
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState('login'); // 默认选择登录tab
   const [form] = Form.useForm();
 
@@ -26,7 +31,7 @@ const LoginRegister = () => {
   };
 
   const goHome = () => {
-    document.location.href = '/';
+    router.push('/')
   };
 
   return (
