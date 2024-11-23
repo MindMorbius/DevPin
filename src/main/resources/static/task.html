@@ -21,14 +21,33 @@
     <link rel="stylesheet" href="css/layui.css" media="all"/>
     <link rel="stylesheet" href="css/public.css" media="all"/>
 
+    <style>
+        .task-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* 为 iOS 设备提供平滑滚动 */
+        }
+        
+        .list-group {
+            min-width: fit-content;
+            padding-bottom: 15px; /* 为滚动条预留空间 */
+        }
+        
+        .list-group-item {
+            min-width: 500px; /* 设置最小宽度确保内容不会挤压 */
+        }
+    </style>
+
 </head>
 <body>
     <div id="app" class="container mt-5">
         <h3>在这里描述你的问题：</h3>
         <h4 style="margin-top: 10px">Tip：点击任务文本可以进入评论页面，点击更新任务按钮才会同步到网络</h4>
         <textarea v-model="problem" style="width: 80%;margin-top: 20px;margin-bottom: 20px"></textarea>
-        <div class="list-group">
-            <task-item v-for="(task, index) in tasks" :key="index" :task="task" @edit-task="editTask" @delete-task="deleteTask"></task-item>
+        <div class="task-container">
+            <div class="list-group">
+                <task-item v-for="(task, index) in tasks" :key="index" :task="task" @edit-task="editTask" @delete-task="deleteTask"></task-item>
+            </div>
         </div>
         <hr>
         <button class="btn btn-primary" @click="addTask" v-show="addFlag2">添加任务</button>
@@ -40,6 +59,8 @@
         <button class="btn btn-success" @click="updateTask" v-show="editFlag">更新任务</button>
 
         <button class="btn btn-primary" @click="goBack">回到主页</button>
+
+        <div style="height: 300px"></div>
     </div>
 
     <script>
