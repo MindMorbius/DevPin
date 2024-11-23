@@ -59,7 +59,6 @@ public class TaskController {
     @PostMapping("/delete")
     public String delete(String id, String clientToken, String username) {
 
-
         if(clientToken.equals(nameGetSToken(username))){
             return taskService.delete(id);
         } else {

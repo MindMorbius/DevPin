@@ -113,6 +113,9 @@
         <div class="post-card">
             <h2>#{{post.tid}}</h2>
             <h4>{{post.title}}</h4>
+
+            <button v-show="username == pusername" style="margin-bottom: 30px;margin-top: 30px" class="btn btn-success" @click="done">标记已完成</button>
+            <button v-show="username == pusername" style="margin-bottom: 30px;margin-top: 30px" class="btn btn-primary" @click="undone">标记未完成</button>
         </div>
 
         <!-- 评论区 -->
@@ -144,6 +147,27 @@
         var layer = layui.layer;
     });
 
+    // 定义修改任务状态的方法
+    function updateTaskCompletion(tasks, tid, isCompleted) {
+        // 遍历任务数组
+        for (let task of tasks) {
+            // 如果当前任务的 tid 匹配，则修改 isCompleted
+            if (task.tid === tid) {
+                task.isCompleted = isCompleted;
+                return true; // 找到任务并修改，返回 true
+            }
+
+            // 如果任务有子任务，递归处理子任务
+            if (task.subtasks && task.subtasks.length > 0) {
+                const result = updateTaskCompletion(task.subtasks, tid, isCompleted);
+                if (result) {
+                    return true; // 子任务修改成功，返回 true
+                }
+            }
+        }
+        return false; // 如果没有找到对应的 tid，返回 false
+    }
+
     var vm = new Vue({
         el: "#main",
         data: {
@@ -154,10 +178,13 @@
             quill: null,
             isadmin: false,
             username:"",
+            pusername:""
         },
 
         created: function () {
             that = this;
+            this.username = getS("username");
+            this.pusername = getS("pusername");
             this.readAll();
         },
 
@@ -241,7 +268,20 @@
                     }
                 });
             },
-
+            done() {
+                let localTasks = base64ToJson(getS("tasks"));
+                updateTaskCompletion(localTasks,getS("tid"),true);
+                setS("tasks",jsonToBase64(localTasks));
+                layer.msg('已经标记');
+                window.location.href="./task.html"
+            },
+            undone() {
+                let localTasks = base64ToJson(getS("tasks"));
+                updateTaskCompletion(localTasks,getS("tid"),false);
+                setS("tasks",jsonToBase64(localTasks));
+                layer.msg('已经标记');
+                window.location.href="./task.html"
+            },
             submitComment() {
                 const content = this.quill.root.innerHTML;
                 if (!content || content === '<p><br></p>') {

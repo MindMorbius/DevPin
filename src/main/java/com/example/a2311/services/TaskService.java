@@ -53,9 +53,19 @@ public class TaskService {
 
     public String update(String id, String problem, String tasks, String time, String username) {
 
-        // 构建查询条件：查找 ID 为 taskId 的任务
+        // 构建查询条件：查找 ID 为 taskId 且 username 匹配的任务
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(id));
+        query.addCriteria(Criteria.where("id").is(id).and("username").is(username));
+
+        // 查询数据库，获取任务信息
+        Task task = taskDao.findOne(id, username);
+
+        // 如果任务不存在或用户名不匹配
+        if (task == null) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("result", "任务不存在或用户名不匹配");
+            return jsonObject.toJSONString();
+        }
 
         // 构建更新内容
         Update update = new Update();
