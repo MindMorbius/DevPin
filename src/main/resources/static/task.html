@@ -74,11 +74,16 @@
             props: ['task'],
             data: function() {
                 return {
-                    addFlag:true,
+                    addFlag: true,
                     showSubtasks: false,
-                    isEditing: false,
-                    newTitle: this.task.title // 用于编辑时临时存储新标题
+                    isEditing: this.task.isEditing || false,
+                    newTitle: this.task.title
                 };
+            },
+            watch: {
+                'task.isEditing': function(newVal) {
+                    this.isEditing = newVal;
+                }
             },
             created: function () {
                 that = this;
@@ -97,16 +102,17 @@
                     let clientToken = getS("token");
                     const jsonObject = {"username": username, "clientToken": clientToken};
                     let tid = "";
-                    let jbtasks = this.task;
+                    let that = this;
                     $.post(generateId,jsonObject,function(data,status){
                         tid = data;
                         const subtask = {
                             title: '新子任务',
                             subtasks: [],
                             isCompleted: false,
-                            tid: tid
+                            tid: tid,
+                            isEditing: true
                         };
-                        jbtasks.subtasks.push(subtask);
+                        that.task.subtasks.push(subtask);
                     });
 
 
@@ -211,16 +217,17 @@
                     const jsonObject = {"username": username, "clientToken": clientToken};
 
                     let tid = "";
-                    let jbtasks = this.tasks;
+                    let that = this;
                     $.post(generateId,jsonObject,function(data,status){
                         tid = data;
                         const newTask = {
                             title: '新任务',
                             subtasks: [],
                             isCompleted: false,
-                            tid: tid
+                            tid: tid,
+                            isEditing: true
                         };
-                        jbtasks.push(newTask);
+                        that.tasks.push(newTask);
                     });
 
 
