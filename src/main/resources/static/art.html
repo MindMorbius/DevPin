@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>devpin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- 	jQuery引入 -->
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+
+    <!-- 	vue引入 -->
+    <script src="js/vue.min.js"></script>
+
+
+    <!-- 选项2: 七牛云 CDN -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <!-- 	layui引入 -->
+    <script src="js/layui.js" type="text/javascript"></script>
+
+    <!-- Main TinyMCE library -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <!-- 引入Quill的CSS和JS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <!-- 全局配置引入 -->
+    <script src="js/public.js" type="text/javascript"></script>
+
+    <!-- 添加自定义样式 -->
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .post-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .post-card {
+            background: #fff;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .post-card h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .post-meta {
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .comment-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .comment-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .comment-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .comment-card strong {
+            color: #2196F3;
+        }
+        .comment-meta {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .btn-comment {
+            margin-top: 20px;
+            padding: 8px 20px;
+        }
+        #editor {
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        .navbar {
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="" id="main">
+
+    <div class="post-container">
+        <!-- 帖子详情卡片 -->
+        <div class="post-card">
+            <h2>#{{post.tid}}</h2>
+            <h4>{{post.title}}</h4>
+        </div>
+
+        <!-- 评论区 -->
+        <div class="comment-section">
+            <h3>评论区</h3>
+            <!-- 评论按钮 -->
+            <button style="margin-bottom: 30px" class="btn btn-primary" @click="showCommentModal">撰写评论</button>
+            <!-- 评论列表 -->
+            <div v-if="comments.length === 0">
+                <p>暂无评论</p>
+            </div>
+            <div v-else>
+                <div v-for="comment in comments" class="comment-card">
+                    <p><strong>{{comment.username}}</strong> 发表于 {{comment.time}}</p>
+                    <div style="width: 80%" v-html="comment.content"></div>
+                    <button @click="del(comment.id)" v-show="username == comment.username" class="btn btn-danger">删除</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    var vm = new Vue({
+        el: "#main",
+        data: {
+            post: {
+                title: '这是一个帖子标题'
+            },
+            comments: [],
+            quill: null,
+            isadmin: false,
+            username:"",
+        },
+
+        created: function () {
+            that = this;
+            this.readAll();
+        },
+
+        methods: {
+            del(id) {
+
+                console.log("test");
+                const jsonObject = {"id": id, "username": that.username, "clientToken": getS("token")};
+
+                $.post(disDel,jsonObject,function(data,status){
+
+                    const thatData = JSON.parse(data);
+
+                    layer.msg(thatData.result, {
+                        time: 2000,
+                    });
+
+                    that.readAll();
+                });
+            },
+            readAll() {
+                this.post.title = getS("newTitle");
+                this.post.tid = getS("tid");
+
+                let username = getS("username");
+                this.username = username;
+                let clientToken = getS("token");
+
+                $.get(disGets + "?username=" + username
+                    + "&clientToken=" + clientToken
+                    + "&tid=" + getS("tid"), function(data,status){
+                    that.comments = data.reverse();
+                });
+            },
+
+            initTinyMCE() {
+                tinymce.init({
+                    selector: '#editor',
+                    height: 200,
+                    menubar: false,
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                              alignleft aligncenter alignright alignjustify | \
+                              bullist numlist outdent indent | removeformat | help'
+                });
+            },
+
+            initQuill() {
+                this.quill = new Quill('#editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, false] }],
+                            ['bold', 'italic', 'underline'],
+                            ['image', 'code-block']
+                        ]
+                    }
+                });
+            },
+
+            showCommentModal() {
+                layer.open({
+                    type: 1,
+                    title: '撰写评论',
+                    area: ['400px', '400px'],
+                    content: `
+                        <div style="padding: 20px;">
+                            <div id="editor" style="height: 180px;"></div>
+                            <div style="margin-top: 15px; text-align: right;">
+                                <button class="btn btn-default" onclick="layer.closeAll()">取消</button>
+                                <button class="btn btn-primary" onclick="vm.submitComment()">提交评论</button>
+                            </div>
+                        </div>
+                    `,
+                    success: function() {
+                        vm.initQuill();
+                    }
+                });
+            },
+
+            submitComment() {
+                const content = this.quill.root.innerHTML;
+                if (!content || content === '<p><br></p>') {
+                    layer.msg('评论内容不能为空');
+                    return;
+                }
+
+                const jsonObject = {"tid": getS("tid"), "time": new Date().toLocaleString(),"content": content, "username": getS("username"), "clientToken": getS("token")};
+
+                $.post(disAdd,jsonObject,function(data,status){
+
+                    const thatData = JSON.parse(data);
+
+                    layer.msg(thatData.result, {
+                        time: 2000,
+                    });
+
+                    that.readAll();
+
+                });
+
+                // this.comments.push({
+                //     content: content,
+                //     username: getS("username") || '匿名用户',
+                //     time: new Date().toLocaleString()
+                // });
+
+                layer.closeAll();
+                layer.msg('评论成功');
+            },
+
+            logout() {
+                var jsonObject={"username":getS("username")};
+
+                $.post(logoutUrl,jsonObject,function(data,status){
+
+                    var thatData = JSON.parse(data);
+
+                    layer.msg(thatData.result, {
+                        time: 2000,
+                    });
+
+                    if(thatData.result === "登出成功"){
+                        setS("token","");
+                        setS("username","");
+                        mNav("./login.html");
+                    }
+                });
+            }
+        }
+    })
+
+</script>
+
+</body>
+
+</html>
