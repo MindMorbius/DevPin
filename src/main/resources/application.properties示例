@@ -1,0 +1,7 @@
+
+server.port=8899
+spring.redis.host=your_host
+spring.redis.port=25001
+spring.redis.password=your_password
+
+spring.data.mongodb.uri=mongodb://username:password@host:port/devpin
