@@ -84,7 +84,7 @@
   <div class="list-group">
     <div class="list-group-item" v-for="post in posts" :key="post.id">
       <div @click="showTask(post)">
-        <h5>{{ post.problem }}</h5>
+        <h5>{{ post.username }}：{{ post.problem }}</h5>
         <p class="time">发布时间: {{ post.time }}</p>
       </div>
       <button v-show="username == post.username" class="delete-btn" @click="deletePost(post.id)">删除</button>
