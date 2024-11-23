@@ -241,7 +241,16 @@
                         this.tasks.splice(index, 1); // 删除任务
                     }
                 },
+                resetEditingState: function(tasks) {
+                    tasks.forEach(task => {
+                        task.isEditing = false;
+                        if (task.subtasks && task.subtasks.length > 0) {
+                            this.resetEditingState(task.subtasks);
+                        }
+                    });
+                },
                 shareTask: function(task) {
+                    this.resetEditingState(this.tasks);
                     console.log(this.tasks);
 
                     let username = getS("username");
@@ -261,6 +270,7 @@
 
                 },
                 updateTask: function(task) {
+                    this.resetEditingState(this.tasks);
                     console.log(this.tasks);
 
                     let username = getS("username");
