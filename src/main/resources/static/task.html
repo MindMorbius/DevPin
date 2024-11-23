@@ -24,7 +24,8 @@
 </head>
 <body>
     <div id="app" class="container mt-5">
-        <h4>在这里描述你的问题：</h4>
+        <h3>在这里描述你的问题：</h3>
+        <h4 style="margin-top: 10px">Tip：点击任务文本可以进入评论页面，点击更新任务按钮才会同步到网络</h4>
         <textarea v-model="problem" style="width: 80%;margin-top: 20px;margin-bottom: 20px"></textarea>
         <div class="list-group">
             <task-item v-for="(task, index) in tasks" :key="index" :task="task" @edit-task="editTask" @delete-task="deleteTask"></task-item>
@@ -126,9 +127,11 @@
                             <button class="btn btn-link btn-sm" @click="toggleSubtasks">
                                 {{ showSubtasks ? '收起' : '显示' }}
                             </button>
-                            <span :style="{textDecoration: task.isCompleted ? 'line-through' : 'none'}">
+                            <span>
                                 <input @click="goDis(task.tid,newTitle)" v-if="!isEditing" v-model="newTitle" type="text" class="form-control form-control-sm" style="display: inline; width: auto;" readonly>
                                 <input v-else v-model="newTitle" type="text" class="form-control form-control-sm" style="display: inline; width: auto;">
+                                <span v-if="task.isCompleted" class="badge bg-success">已完成</span>
+                                <span v-else class="badge bg-primary">进行中</span>
 
                             </span>
                         </div>
@@ -158,14 +161,19 @@
                 addFlag2:true,
                 editFlag:false,
                 problem:"",
-                tasks: []
+                tasks: [],
+                username:"",
+                pusername:""
             },
             created: function () {
                 that = this;
+                this.username = getS("username");
+                this.pusername = getS("pusername");
                 var tasks = getS("tasks");
                 var problem = getS("problem");
                 if(tasks!=""){
                     that.tasks = base64ToJson(tasks);
+                    console.log(that.tasks);
                     that.problem = problem;
                     that.addFlag2 = false;
                     if(getS("username") == getS("pusername")){

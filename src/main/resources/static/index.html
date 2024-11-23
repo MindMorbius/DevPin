@@ -84,8 +84,9 @@
   <div class="list-group">
     <div class="list-group-item" v-for="post in posts" :key="post.id">
       <div @click="showTask(post)">
-        <h5>{{ post.problem }}</h5>
+        <h5>{{ post.username }}：{{ post.problem }}</h5>
         <p class="time">发布时间: {{ post.time }}</p>
+        <p>已完成/总任务数 : {{post.doneCount}}/{{post.totalCount}}</p>
       </div>
       <button v-show="username == post.username" class="delete-btn" @click="deletePost(post.id)">删除</button>
     </div>
@@ -98,11 +99,41 @@
     var layer = layui.layer;
   });
 
+  function countTasks(tasks) {
+    let totalTasks = 0;
+
+    // 遍历任务数组
+    tasks.forEach(task => {
+      totalTasks++;  // 计数主任务
+      if (task.subtasks && task.subtasks.length > 0) {
+        totalTasks += countTasks(task.subtasks);  // 递归计数子任务
+      }
+    });
+
+    return totalTasks;
+  }
+
+  function countCompletedTasks(tasks) {
+    let completedTasks = 0;
+
+    // 遍历任务数组
+    tasks.forEach(task => {
+      if (task.isCompleted) {
+        completedTasks++;  // 如果任务完成，增加计数
+      }
+      if (task.subtasks && task.subtasks.length > 0) {
+        completedTasks += countCompletedTasks(task.subtasks);  // 递归计数子任务
+      }
+    });
+
+    return completedTasks;
+  }
+
   new Vue({
     el: '#app',
     data: {
       posts: [],
-      username:''
+      username:'',
     },
     created: function () {
       that = this;
@@ -119,6 +150,13 @@
                 + "&clientToken=" + clientToken, function(data,status){
           mlog(data);
           that.posts = data;
+
+          for (let index in that.posts) {
+            let aTask = base64ToJson(that.posts[index].tasks);
+            that.posts[index].totalCount = countTasks(aTask);
+            that.posts[index].doneCount = countCompletedTasks(aTask);
+
+          }
         });
       },
       // 登录方法
