@@ -273,14 +273,26 @@
                 updateTaskCompletion(localTasks,getS("tid"),true);
                 setS("tasks",jsonToBase64(localTasks));
                 layer.msg('已经标记');
-                window.location.href="./task.html"
+                const mS = getS("markdownStatus");
+                if (mS === "true") {
+                    window.location.href = '/taskmd.html';
+                } else {
+                    window.location.href = '/task.html';
+                }
             },
             undone() {
                 let localTasks = base64ToJson(getS("tasks"));
                 updateTaskCompletion(localTasks,getS("tid"),false);
                 setS("tasks",jsonToBase64(localTasks));
                 layer.msg('已经标记');
-                window.location.href="./task.html"
+
+                const mS = getS("markdownStatus");
+                if (mS === "true") {
+                    window.location.href = '/taskmd.html';
+                } else {
+                    window.location.href = '/task.html';
+                }
+
             },
             submitComment() {
                 const content = this.quill.root.innerHTML;

@@ -166,16 +166,27 @@
       // 创建新帖子方法
       createPost() {
         setS("tasks", "");
-        window.location.href = '/task.html';
+        const mS = getS("markdownStatus");
+        if (mS === "true") {
+          window.location.href = '/taskmd.html';
+        } else {
+          window.location.href = '/task.html';
+        }
       },
       // 显示帖子详情
       showTask(post) {
-        console.log(post.tasks);
         setS("tasks", post.tasks);
         setS("problem", post.problem);
         setS("pusername", post.username);
         setS("postId",post.id);
-        window.location.href = '/task.html';
+
+        const mS = getS("markdownStatus");
+        if (mS === "true") {
+          window.location.href = '/taskmd.html';
+        } else {
+          window.location.href = '/task.html';
+        }
+
       },
       // 删除帖子方法
       deletePost(postId) {

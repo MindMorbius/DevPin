@@ -34,6 +34,11 @@ public class TaskController {
     public String add(String time, String problem, String tasks, String username, String clientToken) {
 
         if(clientToken.equals(nameGetSToken(username))){
+            if("".equals(problem)){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("result", "描述不能为空");
+                return jsonObject.toJSONString();
+            }
             return taskService.add(problem, tasks, time, username);
         } else {
             JSONObject jsonObject = new JSONObject();
@@ -47,6 +52,11 @@ public class TaskController {
     public String update(String id, String time, String problem, String tasks, String username, String clientToken) {
 
         if(clientToken.equals(nameGetSToken(username))){
+            if("".equals(problem)){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("result", "描述不能为空");
+                return jsonObject.toJSONString();
+            }
             return taskService.update(id, problem, tasks, time, username);
         } else {
             JSONObject jsonObject = new JSONObject();

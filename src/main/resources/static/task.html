@@ -41,9 +41,12 @@
 </head>
 <body>
     <div id="app" class="container mt-5">
-        <h3>在这里描述你的问题：</h3>
-        <h4 style="margin-top: 10px">Tip：点击任务文本可以进入评论页面，点击更新任务按钮才会同步到网络</h4>
-        <textarea v-model="problem" style="width: 80%;margin-top: 20px;margin-bottom: 20px"></textarea>
+        <button class="btn btn-success" @click="markdownStatus" >markdown格式</button>
+        <h3 style="margin-top: 10px">在这里描述你的问题：</h3>
+        <div style="margin-top: 10px;" class="alert alert-info">
+            Tip：点击任务文本可以进入评论页面，点击更新任务按钮才会同步到网络
+        </div>
+        <textarea v-model="problem" style="width: 80%;margin-bottom: 20px"></textarea>
         <div class="task-container">
             <div class="list-group">
                 <task-item v-for="(task, index) in tasks" :key="index" :task="task" @edit-task="editTask" @delete-task="deleteTask"></task-item>
@@ -288,6 +291,10 @@
 
                     });
 
+                },
+                markdownStatus: function() {
+                    setS("markdownStatus",true);
+                    window.location.href = "./taskmd.html";
                 },
                 goBack: function() {
                     window.location.href = "./";
