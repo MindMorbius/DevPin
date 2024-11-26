@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>帖子列表</title>
+  <title>DevPin</title>
 
   <!-- 引入 Bootstrap CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -72,12 +72,13 @@
 </head>
 <body>
 <div id="app" class="container mt-4">
-  <h1 class="mb-4 text-center text-primary">问题列表</h1>
+  <h1 class="mb-4 text-center text-primary">DevPin</h1>
+  <h3 class="mb-4 text-center text-primary">不积跬步无以至千里，不积小流无以成江海</h3>
 
   <!-- 登录和发帖按钮 -->
-  <div class="btn-container d-flex justify-content-between">
-    <button class="btn btn-primary" @click="login">登录</button>
-    <button class="btn btn-success" @click="createPost">新的点子</button>
+  <div class="btn-container d-flex">
+    <button v-show="username === ''" class="btn btn-primary" @click="login">登录</button>
+    <button style="margin-left: 20px" class="btn btn-success" @click="createPost">新的点子</button>
   </div>
 
   <!-- 帖子列表 -->
@@ -157,6 +158,23 @@
             that.posts[index].doneCount = countCompletedTasks(aTask);
 
           }
+        });
+
+        const jsonObject = {"username": username, "clientToken": clientToken};
+        $.post(checkUrl,jsonObject,function(data,status){
+          const thatData = JSON.parse(data);
+          // layer.msg(thatData.result, {
+          //   time: 2000,
+          // });
+
+          if("token无效" === thatData.result){
+            if(username!==""){
+              window.location.reload();
+            }
+            setS("username","");
+            setS("token","");
+          }
+
         });
       },
       // 登录方法

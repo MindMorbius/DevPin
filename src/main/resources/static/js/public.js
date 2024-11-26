@@ -3,6 +3,7 @@ var baseUrl=".";
 var loginUrl=baseUrl+"/user/login";
 var registerUrl=baseUrl+"/user/register";
 var logoutUrl=baseUrl+"/user/logout";
+var checkUrl=baseUrl+"/user/check";
 
 var taskGets=baseUrl+"/task/gets";
 var taskAdd=baseUrl+"/task/add";
