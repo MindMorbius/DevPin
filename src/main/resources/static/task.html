@@ -109,15 +109,31 @@
                     let tid = "";
                     let that = this;
                     $.post(generateId,jsonObject,function(data,status){
-                        tid = data;
-                        const subtask = {
-                            title: '新子任务',
-                            subtasks: [],
-                            isCompleted: false,
-                            tid: tid,
-                            isEditing: true
-                        };
-                        that.task.subtasks.push(subtask);
+
+                        var thatData = JSON.parse(data);
+                        console.log(thatData);
+                        if(typeof thatData === 'object' && thatData !== null && 'result' in thatData){
+                            layer.msg(thatData.result, {
+                                time: 2000,
+                                end: function () {  // 消息框关闭后执行的回调
+                                    setS("username","")
+                                    setS("token","")
+                                    window.location.reload()
+                                }
+                            })
+                        } else {
+                            tid = data;
+                            const subtask = {
+                                title: '新子任务',
+                                subtasks: [],
+                                isCompleted: false,
+                                tid: tid,
+                                isEditing: true
+                            };
+                            that.task.subtasks.push(subtask);
+                        }
+
+
                     });
 
 
@@ -233,15 +249,31 @@
                     let tid = "";
                     let that = this;
                     $.post(generateId,jsonObject,function(data,status){
-                        tid = data;
-                        const newTask = {
-                            title: '新任务',
-                            subtasks: [],
-                            isCompleted: false,
-                            tid: tid,
-                            isEditing: true
-                        };
-                        that.tasks.push(newTask);
+
+                        var thatData = JSON.parse(data);
+                        console.log(thatData);
+                        if(typeof thatData === 'object' && thatData !== null && 'result' in thatData){
+                            layer.msg(thatData.result, {
+                                time: 2000,
+                                end: function () {  // 消息框关闭后执行的回调
+                                    setS("username","")
+                                    setS("token","")
+                                    window.location.reload()
+                                }
+                            })
+                        } else {
+                            tid = data;
+                            const newTask = {
+                                title: '新任务',
+                                subtasks: [],
+                                isCompleted: false,
+                                tid: tid,
+                                isEditing: true
+                            };
+                            that.tasks.push(newTask);
+                        }
+
+
                     });
 
 
@@ -278,7 +310,12 @@
 
                         layer.msg(thatData.result, {
                             time: 2000,
-                        });
+                            end: function () {  // 消息框关闭后执行的回调
+                                setS("username","")
+                                setS("token","")
+                                window.location.reload()
+                            }
+                        })
 
                     });
 
@@ -298,7 +335,12 @@
 
                         layer.msg(thatData.result, {
                             time: 2000,
-                        });
+                            end: function () {  // 消息框关闭后执行的回调
+                                setS("username","")
+                                setS("token","")
+                                window.location.reload()
+                            }
+                        })
 
                     });
 
@@ -325,11 +367,17 @@
 
                         layer.msg(thatData.result, {
                             time: 2000,
-                        });
+                            end: function () {  // 消息框关闭后执行的回调
+                                setS("username","")
+                                setS("token","")
+                                window.location.reload()
+                            }
+                        })
 
                         if("更新成功" === thatData.result){
                             that.isPub = isPub;
                         }
+
 
                     });
                 },

@@ -76,10 +76,16 @@
                         $.post(generateId, jsonObject, function(data, status) {
                             console.log(data);
                             var thatData = JSON.parse(data);
-                            if(typeof obj === 'object' && obj !== null && 'result' in obj){
+                            if(typeof thatData === 'object' && thatData !== null && 'result' in thatData){
                                 layer.msg(thatData.result, {
                                     time: 2000,
-                                });
+                                    end: function () {  // 消息框关闭后执行的回调
+                                        setS("username","")
+                                        setS("token","")
+                                        window.location.reload()
+                                    }
+                                })
+
                             } else {
                                 task.tid = data;
                                 console.log('更新任务tid:', {
@@ -253,7 +259,12 @@
 
                             layer.msg(thatData.result, {
                                 time: 2000,
-                            });
+                                end: function () {  // 消息框关闭后执行的回调
+                                    setS("username","")
+                                    setS("token","")
+                                    window.location.reload()
+                                }
+                            })
 
                         });
                     });
@@ -273,10 +284,14 @@
                         $.post(taskUpdate,jsonObject,function(data,status){
 
                             const thatData = JSON.parse(data);
-
                             layer.msg(thatData.result, {
                                 time: 2000,
-                            });
+                                end: function () {  // 消息框关闭后执行的回调
+                                    setS("username","")
+                                    setS("token","")
+                                    window.location.reload()
+                                }
+                            })
 
                         });
                     });
