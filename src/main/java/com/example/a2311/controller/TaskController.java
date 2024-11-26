@@ -66,6 +66,19 @@ public class TaskController {
 
     }
 
+    @PostMapping("/updatepub")
+    public String updatepub(String id, String username, boolean pub, String clientToken) {
+
+        if(clientToken.equals(nameGetSToken(username))){
+            return taskService.updatePub(id, username, pub);
+        } else {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("result", "token无效");
+            return jsonObject.toJSONString();
+        }
+
+    }
+
     @PostMapping("/delete")
     public String delete(String id, String clientToken, String username) {
 
@@ -82,13 +95,11 @@ public class TaskController {
 
     @GetMapping("/gets")
     public List<Task> get(String clientToken, String username) {
-//        if(clientToken.equals(nameGetSToken(username))){
-//            return taskService.getAll();
-//        } else {
-//            return null;
-//        }
-
-        return taskService.getAll();
+        if(clientToken.equals(nameGetSToken(username))){
+            return taskService.getMeAndPubAll(username);
+        } else {
+            return taskService.getPubAll();
+        }
 
     }
 

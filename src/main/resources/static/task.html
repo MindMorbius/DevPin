@@ -42,6 +42,8 @@
 <body>
     <div id="app" class="container mt-5">
         <button class="btn btn-success" @click="markdownStatus" >markdown格式</button>
+        <button v-show="!isPub" class="btn btn-success" @click="setPublic" >设为公开</button>
+        <button v-show="isPub" class="btn btn-success" @click="setPrivate" >设为私有</button>
         <h3 style="margin-top: 10px">在这里描述你的问题：</h3>
         <div style="margin-top: 10px;" class="alert alert-info">
             Tip：点击任务文本可以进入评论页面，点击更新任务按钮才会同步到网络
@@ -184,6 +186,7 @@
             `
         });
 
+        var that;
         // Vue实例
         new Vue({
             el: '#app',
@@ -193,12 +196,20 @@
                 problem:"",
                 tasks: [],
                 username:"",
-                pusername:""
+                pusername:"",
+                isPub:false
             },
             created: function () {
                 that = this;
                 this.username = getS("username");
                 this.pusername = getS("pusername");
+                if("true" === getS("pub")){
+                    this.isPub = true;
+                } else {
+                    this.isPub = false;
+                }
+
+                console.log(this.isPub);
                 var tasks = getS("tasks");
                 var problem = getS("problem");
                 if(tasks!=""){
@@ -298,6 +309,29 @@
                 },
                 goBack: function() {
                     window.location.href = "./";
+                },
+                setPublic: function() {
+                    this.updatePub(true);
+                },
+                setPrivate: function() {
+                    this.updatePub(false);
+                },
+                updatePub: function(isPub) {
+                    const jsonObject = {"pub" :isPub, "id": getS("postId"), "username": getS("username"), "clientToken": getS("token")};
+                    that = this;
+                    $.post(taskUpdatepub,jsonObject,function(data,status){
+
+                        const thatData = JSON.parse(data);
+
+                        layer.msg(thatData.result, {
+                            time: 2000,
+                        });
+
+                        if("更新成功" === thatData.result){
+                            that.isPub = isPub;
+                        }
+
+                    });
                 },
             }
         });

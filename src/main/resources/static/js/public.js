@@ -8,6 +8,8 @@ var taskGets=baseUrl+"/task/gets";
 var taskAdd=baseUrl+"/task/add";
 var taskDel=baseUrl+"/task/delete";
 var taskUpdate=baseUrl+"/task/update";
+var taskUpdatepub=baseUrl+"/task/updatepub";
+
 
 var generateId=baseUrl+"/dis/generateId";
 

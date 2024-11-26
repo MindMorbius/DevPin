@@ -16,6 +16,8 @@ public class Task {
 
     private String problem;
 
+    private boolean pub;
+
     public String getId() {
         return id;
     }
@@ -54,5 +56,13 @@ public class Task {
 
     public void setProblem(String problem) {
         this.problem = problem;
+    }
+
+    public boolean getPub() {
+        return pub;
+    }
+
+    public void setPub(boolean pub) {
+        this.pub = pub;
     }
 }

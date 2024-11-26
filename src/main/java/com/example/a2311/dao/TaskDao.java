@@ -35,8 +35,32 @@ public class TaskDao {
         return mongoTemplate.findOne(query, Task.class);
     }
 
+    public List<Task> findMeAll(String username) {
+        // 创建查询条件：根据 id 和 username 查询
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+
+        // 执行查询，返回匹配的第一个 Task 文档
+        return mongoTemplate.find(query, Task.class);
+    }
+
+    public List<Task> findNotMePubAll(String username) {
+        // 创建查询条件：根据 id 和 username 查询
+        Query query = new Query();
+        query.addCriteria(Criteria.where("pub").is(true).and("username").ne(username));
+
+        // 执行查询，返回匹配的第一个 Task 文档
+        return mongoTemplate.find(query, Task.class);
+    }
+
+
     public List<Task> findAll() {
-        return mongoTemplate.findAll(Task.class);
+        // 创建查询条件：根据 id 和 username 查询
+        Query query = new Query();
+        query.addCriteria(Criteria.where("pub").is(true));
+
+        // 执行查询，返回匹配的第一个 Task 文档
+        return mongoTemplate.find(query, Task.class);
     }
 
     public void update(Query query, Update update) {
